@@ -2,56 +2,120 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { PostsRepository } from "../repo/PostRepository";
-import { Button, Container, Grid } from "@material-ui/core";
+import { Button, Container, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: "30%",
+        marginTop: "1%"
+    },
+    item: {
+        padding: theme.spacing(2),
+        width: "100%",
+    },
+    desc: {
+        height: "30px",
+        textAlign: "center",
+        color: theme.palette.text.primary,
+        backgroundColor: "lightblue"
+    }
+}));
 
 export default function TicketType() {
     let { id } = useParams();
-    const [ticketTypeData, setTicketTypeData] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
 
-    useEffect(() => {
+    const [formData, setFormData] = useState({
+        name: '',
+        groups: [],
+        priorities: []
+    });
 
-        setLoading(true);
-        PostsRepository.getTicketTypeById(id)
-            .then((res) => {
-                setTicketTypeData(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-                setLoading(false);
-                setError("An error occured!");
-            });
+    const [priorities, setPriorities] = useState();
+    const [groups, setGroups] = useState();
+
+    useEffect(() => {
+        loadData();
+        PostsRepository.getAllPriorities().then(res => {
+            setPriorities(res.data);
+        });
     }, []);
+
+    const loadData = () => {
+        PostsRepository.getTicketTypeById(id).then(res => {
+            console.log(res.data);
+            setFormData(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
 
     return (
         <>
             {loading && "Loading..."}
             {error && "Error: " + error}
-            <Container>
-                <Grid container spacing={1}>
-                    <Grid item xs={12} md={12}>
-                        <h1>Ticket-Type ID: {id}</h1>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <h2>Ticket-Type Name: {ticketTypeData?.name}</h2>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <p>Ticket created by: {ticketTypeData?.createdBy}</p>
-                        <p>
-                            <Link push="true" to="/ticket_types" style={{ textDecoration: "none" }}>
-                                <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Back</Button>
-                            </Link>
-                        </p>
-                        <p>
-                            <Link push="true" to={`/ticket_types/edit_ticketType/${id}`} style={{ textDecoration: "none" }}>
-                                <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Edit</Button>
-                            </Link>
-                        </p>
+            <div className={useStyles("").root}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} style={{ textAlign: "center" }}>
+                        <Grid item xs={12} className={useStyles("").item}>
+                            <Paper className={useStyles("").desc}>Ticket Type with ID: <b>{id}</b></Paper>
+                        </Grid>
+                        <Grid item xs={12} className={useStyles("").item}>
+                            <TextField
+                                disabled
+                                fullWidth
+                                variant="outlined"
+                                label='Name'
+                                type="text"
+                                value={formData.name}
+                            />
+                        </Grid>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Priorities for the current Ticket-Type</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            {
+                                formData.priorities && formData.priorities.map((priority) => (
+                                    <>
+                                        <TableBody>
+                                            <TableRow key={priority.id}>
+                                                <TableCell>
+                                                    {priority.name}
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </>
+                                ))
+                            }
+                        </Table>
+
+                        <Grid item xs={12} md={12}>
+
+                            <p>
+                                <Link push="true" to="/ticket_types" style={{ textDecoration: "none" }}>
+                                    <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Back</Button>
+                                </Link>
+                            </p>
+
+                            <p>
+                                <Link push="true" to={`/ticket_types/edit_ticket_type/${id}`} style={{ textDecoration: "none" }}>
+                                    <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Edit</Button>
+                                </Link>
+                            </p>
+                        </Grid>
+
                     </Grid>
                 </Grid>
-            </Container>
+            </div>
 
         </>
     );

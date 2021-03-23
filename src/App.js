@@ -28,7 +28,7 @@ function App() {
       <Route path="/ticket_types/details/:id" exact component={TicketType} />
       <Route path="/priorities/details/:id" exact component={Priority} />
       <Route path="/tickets/edit_ticket/:id" exact component={EditTicket} />
-      <Route path="/ticket_types/edit_ticketType/:id" exact component={EditTicketType} />
+      <Route path="/ticket_types/edit_ticket_type/:id" exact component={EditTicketType} />
       <Route path="/priorities/edit_priority/:id" exact component={EditPriority} />
       <Route path="/tickets/create_ticket" exact component={CreateTicket} />
       <Route path="/ticket_types/create_ticket_type" exact component={CreateTicketType} />

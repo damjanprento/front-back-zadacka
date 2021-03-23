@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
+import { DeleteRepository } from "../repo/DeleteRepository";
 import { Link } from 'react-router-dom';
 
 export default function TicketTypes() {
@@ -23,6 +24,12 @@ export default function TicketTypes() {
             })
     }, []);
 
+    const deleteTicketType = (id) => {
+        DeleteRepository.deleteTicketType(id).then((res) => {
+
+        })
+    }
+
     return <>
 
         <Container>
@@ -33,6 +40,7 @@ export default function TicketTypes() {
                             <TableRow>
                                 <TableCell>Ticket-Type ID</TableCell>
                                 <TableCell>Ticket-Type Name</TableCell>
+                                {/* <TableCell>Ticket-Type Priorities</TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -42,10 +50,14 @@ export default function TicketTypes() {
                                     <TableRow key={item.id}>
                                         <TableCell>{item.id}</TableCell>
                                         <TableCell>{item.name}</TableCell>
+                                        {/* <TableCell>{item.createdBy}</TableCell> */}
                                         <TableCell>
                                             <Link to={`/ticket_types/details/${item.id}`} style={{ textDecoration: "none" }}>
                                                 <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Open</Button>
                                             </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}

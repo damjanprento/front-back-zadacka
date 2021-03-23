@@ -29,8 +29,6 @@ const useStyles = makeStyles((theme) => ({
 export default function CreatePriority(props) {
     const [formData, setFormData] = useState({
         name: '',
-        createdBy: '',
-        ticketType: ''
     });
     const [error, setError] = useState();
     const [ticketTypes, setTicketTypes] = useState();
@@ -50,15 +48,7 @@ export default function CreatePriority(props) {
     const handleChangeFormData = (name, value) => {
         console.log(value);
         let newFormData = { ...formData };
-        if (name === "ticketType") {
-            ticketTypes.forEach(type => {
-                if (type.id === value) {
-                    newFormData[name] = type;
-                }
-            })
-        } else {
-            newFormData[name] = value;
-        }
+        newFormData[name] = value;
         console.log(newFormData);
         setFormData(newFormData);
     }
@@ -95,31 +85,8 @@ export default function CreatePriority(props) {
                                 value={formData.name}
                             />
                         </Grid>
-                        <Grid item xs={12} className={useStyles("").item}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                label="Created By"
-                                type="text"
-                                onChange={(e) => handleChangeFormData("createdBy", e.target.value)}
-                                value={formData.createdBy}
-                            />
-                        </Grid>
-                        <Grid item xs={12} className={useStyles("").item}>
-                            <InputLabel>Ticket Type</InputLabel>
-                            <Select
-                                defaultValue=""
-                                fullWidth
-                                value={formData?.ticketType?.id || ""}
-                                onChange={(e) => handleChangeFormData("ticketType", e.target.value)}
-                            >
-                                {ticketTypes &&
-                                    ticketTypes.length > 0 &&
-                                    ticketTypes.map((item) => (
-                                        <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
-                                    ))}
-                            </Select>
-                        </Grid>
+
+
 
                         <Grid item xs={12} className={useStyles("").item}>
                             <Button
