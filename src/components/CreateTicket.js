@@ -5,6 +5,7 @@ import { Redirect, useParams } from 'react-router';
 import { PostsRepository } from '../repo/PostRepository';
 import { EditInfoRepository } from '../repo/EditInfoRepository';
 import { PostInfoRepository } from '../repo/PostInfoRepository';
+import { Autocomplete } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,6 +33,8 @@ export default function CreateTicket(props) {
         description: '',
         ticketType: ''
     });
+    const [cities, setCities] = useState([]);
+    const [citySearch, setCitySearch] = useState("");
     const [error, setError] = useState();
     const [ticketTypes, setTicketTypes] = useState();
     const [redirectTo, setRedirectTo] = useState();
@@ -47,6 +50,15 @@ export default function CreateTicket(props) {
             })
     }, []);
 
+    useEffect(() => {
+        getCitiesFiltered(citySearch);
+    }, [citySearch]);
+
+    const getCitiesFiltered = (nameFilter) => {
+        PostsRepository.getCitiesFiltered(nameFilter).then(res => {
+            setCities(res.data);
+        });
+    }
 
     const handleChangeFormData = (name, value) => {
         console.log(value);
@@ -57,6 +69,10 @@ export default function CreateTicket(props) {
                     newFormData[name] = type;
                 }
             })
+        }
+        else if (name === 'city') {
+            let selectedCity = cities.filter(c => c.name === value)[0];
+            newFormData[name] = selectedCity;
         } else {
             newFormData[name] = value;
         }
@@ -68,7 +84,6 @@ export default function CreateTicket(props) {
     const handleSubmit = () => {
         PostInfoRepository.createTicket(formData)
             .then((res) => {
-                console.log(res.data);
                 setFormData(res.data);
                 setRedirectTo("/tickets");
             })
@@ -124,6 +139,37 @@ export default function CreateTicket(props) {
                                         <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
                                     ))}
                             </Select>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Autocomplete
+                                noOptionsText={'Нема опции'}
+                                autoComplete={false}
+                                size="small"
+                                value={
+                                    formData?.fatherData?.birthCountry?.name
+                                        ? formData.fatherData.birthCountry.name
+                                        : ""
+                                }
+                                onChange={(event, newValue) => {
+                                    handleChangeFormData("city", newValue);
+                                }}
+                                inputValue={citySearch}
+                                onInputChange={(event, newInputValue) => {
+                                    setCitySearch(
+                                        newInputValue
+                                    );
+                                }}
+                                options={cities?.map((city) => city.name)}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label={"City"}
+                                        fullWidth
+                                        variant="outlined"
+                                    />
+                                )}
+                            />
                         </Grid>
 
                         <Grid item xs={12} className={useStyles("").item}>

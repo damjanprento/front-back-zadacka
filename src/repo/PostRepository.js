@@ -38,7 +38,12 @@ export const PostsRepository = {
         });
     },
 
-
+    getCitiesFiltered: function (filterString) {
+        return axios({
+            method: "GET",
+            url: `http://localhost:8888/cities?nameFilter=${filterString}`
+        })
+    },
 
     editTicketInfo: function (dataObj) {
         return axios({

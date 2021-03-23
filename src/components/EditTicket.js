@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Redirect, useParams } from 'react-router';
 import { PostsRepository } from '../repo/PostRepository';
 import { EditInfoRepository } from '../repo/EditInfoRepository';
+import { Autocomplete } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,9 +37,25 @@ export default function EditTicket(props) {
     const [error, setError] = useState();
     const [ticketTypes, setTicketTypes] = useState();
     const [redirectTo, setRedirectTo] = useState();
+    const [cities, setCities] = useState([]);
+    const [citySearch, setCitySearch] = useState("");
 
     useEffect(() => {
         loadData();
+        loadTicketTypes();
+    }, []);
+
+    useEffect(() => {
+        getCitiesFiltered(citySearch);
+    }, [citySearch])
+
+    const getCitiesFiltered = (nameFilter) => {
+        PostsRepository.getCitiesFiltered(nameFilter).then(res => {
+            setCities(res.data);
+        });
+    }
+
+    const loadTicketTypes = () => {
         PostsRepository.getAllTicketTypes()
             .then((res) => {
                 setTicketTypes(res.data);
@@ -47,7 +64,7 @@ export default function EditTicket(props) {
                 console.log(err);
                 setError("An error has occured!");
             })
-    }, []);
+    }
 
     const loadData = () => {
         PostsRepository.getTicketById(id).then(res => {
@@ -66,6 +83,10 @@ export default function EditTicket(props) {
                     newFormData[name] = type;
                 }
             })
+        }
+        else if (name === "city") {
+            let selectedCity = cities.filter(c => c.name === value)[0];
+            newFormData[name] = selectedCity;
         } else {
             newFormData[name] = value;
         }
@@ -141,6 +162,37 @@ export default function EditTicket(props) {
                                         <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
                                     ))}
                             </Select>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Autocomplete
+                                noOptionsText={'Нема опции'}
+                                autoComplete={false}
+                                size="small"
+                                value={
+                                    formData?.fatherData?.birthCountry?.name
+                                        ? formData.fatherData.birthCountry.name
+                                        : ""
+                                }
+                                onChange={(event, newValue) => {
+                                    handleChangeFormData("city", newValue);
+                                }}
+                                inputValue={citySearch}
+                                onInputChange={(event, newInputValue) => {
+                                    setCitySearch(
+                                        newInputValue
+                                    );
+                                }}
+                                options={cities?.map((city) => city.name)}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label={"City"}
+                                        fullWidth
+                                        variant="outlined"
+                                    />
+                                )}
+                            />
                         </Grid>
 
                         <Grid item xs={12} className={useStyles("").item}>

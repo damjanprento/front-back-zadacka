@@ -89,7 +89,6 @@ export default function TicketTypes() {
                                         </TableCell>
                                         <TableCell>
                                             <Button onClick={() => {
-                                                // deleteTicketType(item.id) 
                                                 handleOpenDialog(item.id);
                                             }} color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
                                         </TableCell>
