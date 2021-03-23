@@ -131,7 +131,7 @@ export default function EditTicketType(props) {
                                                             style={{ backgroundColor: "green", color: "white" }}
                                                         >
                                                             Add
-                                                    </Button>
+                                                        </Button>
                                                     }
                                                     {
                                                         formData.priorities &&
@@ -141,7 +141,7 @@ export default function EditTicketType(props) {
                                                             style={{ backgroundColor: "red", color: "white" }}
                                                         >
                                                             Remove
-                                                    </Button>
+                                                        </Button>
                                                     }
                                                 </TableCell>
                                             </TableRow>

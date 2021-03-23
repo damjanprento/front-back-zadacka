@@ -56,7 +56,6 @@ export default function TicketType() {
         });
     }
 
-
     return (
         <>
             {loading && "Loading..."}

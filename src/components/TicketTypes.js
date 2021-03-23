@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody } from '@material-ui/core';
+import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, DialogTitle, DialogContent, DialogActions, Dialog } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
 import { DeleteRepository } from "../repo/DeleteRepository";
@@ -9,10 +9,24 @@ export default function TicketTypes() {
     const [ticketTypes, setTicketTypes] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
+    const [priorities, setPriorities] = useState();
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedForDelete, setSelectedForDelete] = useState();
 
     useEffect(() => {
 
         setLoading(true);
+        loadPriorities();
+        loadTicketTypes();
+    }, []);
+
+    const loadPriorities = () => {
+        PostsRepository.getAllPriorities().then((res) => {
+            setPriorities(res.data);
+        })
+    }
+
+    const loadTicketTypes = () => {
         PostsRepository.getAllTicketTypes().then((res) => {
             setTicketTypes(res.data);
             setLoading(false);
@@ -22,12 +36,22 @@ export default function TicketTypes() {
                 setLoading(false);
                 setError("An error has occured!");
             })
-    }, []);
+    }
 
     const deleteTicketType = (id) => {
         DeleteRepository.deleteTicketType(id).then((res) => {
-
+            handleCloseDialog();
+            loadTicketTypes();
         })
+    }
+
+    const handleOpenDialog = (id) => {
+        setDialogOpen(true);
+        setSelectedForDelete(id);
+    }
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
     }
 
     return <>
@@ -40,7 +64,7 @@ export default function TicketTypes() {
                             <TableRow>
                                 <TableCell>Ticket-Type ID</TableCell>
                                 <TableCell>Ticket-Type Name</TableCell>
-                                {/* <TableCell>Ticket-Type Priorities</TableCell> */}
+                                <TableCell>Ticket-Type Priorities</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -50,14 +74,24 @@ export default function TicketTypes() {
                                     <TableRow key={item.id}>
                                         <TableCell>{item.id}</TableCell>
                                         <TableCell>{item.name}</TableCell>
-                                        {/* <TableCell>{item.createdBy}</TableCell> */}
+                                        <TableCell>
+                                            {item.priorities && item.priorities.map((priority) => (
+                                                <ul>
+                                                    <li>{priority.name}</li>
+                                                </ul>
+                                            ))
+                                            }
+                                        </TableCell>
                                         <TableCell>
                                             <Link to={`/ticket_types/details/${item.id}`} style={{ textDecoration: "none" }}>
                                                 <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Open</Button>
                                             </Link>
                                         </TableCell>
                                         <TableCell>
-                                            <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
+                                            <Button onClick={() => {
+                                                // deleteTicketType(item.id) 
+                                                handleOpenDialog(item.id);
+                                            }} color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -75,6 +109,23 @@ export default function TicketTypes() {
                 </Grid>
             </Grid>
         </Container>
+
+
+        <Dialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+        >
+            <DialogTitle>
+                Confirmation
+            </DialogTitle>
+            <DialogContent>
+                Are you sure you want to delete this ticket type?
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => { deleteTicketType(selectedForDelete) }}>Yes</Button>
+                <Button onClick={handleCloseDialog}>No</Button>
+            </DialogActions>
+        </Dialog>
 
     </>
 }

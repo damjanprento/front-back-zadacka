@@ -1,17 +1,24 @@
 import React from 'react';
-import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody } from '@material-ui/core';
+import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
+import { DeleteRepository } from "../repo/DeleteRepository";
 import { Link } from 'react-router-dom';
 
 export default function Tickets() {
     const [tickets, setTickets] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedForDelete, setSelectedForDelete] = useState();
 
     useEffect(() => {
 
         setLoading(true);
+        loadTickets();
+    }, []);
+
+    const loadTickets = () => {
         PostsRepository.getAllTickets().then((res) => {
             setTickets(res.data);
             setLoading(false);
@@ -21,7 +28,23 @@ export default function Tickets() {
                 setLoading(false);
                 setError("An error has occured!");
             })
-    }, []);
+    }
+
+    const deleteTicket = (id) => {
+        DeleteRepository.deleteTicket(id).then((res) => {
+            handleCloseDialog();
+            loadTickets();
+        })
+    }
+
+    const handleOpenDialog = (id) => {
+        setDialogOpen(true);
+        setSelectedForDelete(id);
+    }
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    }
 
     return <>
 
@@ -51,6 +74,11 @@ export default function Tickets() {
                                                 <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Open</Button>
                                             </Link>
                                         </TableCell>
+                                        <TableCell>
+                                            <Button onClick={() => {
+                                                handleOpenDialog(item.id);
+                                            }} color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                         </TableBody>
@@ -68,5 +96,20 @@ export default function Tickets() {
             </Grid>
         </Container>
 
+        <Dialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+        >
+            <DialogTitle>
+                Confirmation
+            </DialogTitle>
+            <DialogContent>
+                Are you sure you want to delete this ticket?
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => { deleteTicket(selectedForDelete) }}>Yes</Button>
+                <Button onClick={handleCloseDialog}>No</Button>
+            </DialogActions>
+        </Dialog>
     </>
 }
