@@ -1,17 +1,25 @@
 import React from 'react';
-import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody } from '@material-ui/core';
+import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
-import { Link } from 'react-router-dom';
+import { DeleteRepository } from "../repo/DeleteRepository";
+import { Link, Redirect } from 'react-router-dom';
 
 export default function Priorities() {
     const [priorities, setPriorities] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedForDelete, setSelectedForDelete] = useState();
+
 
     useEffect(() => {
 
         setLoading(true);
+        loadPriorities();
+    }, []);
+
+    const loadPriorities = () => {
         PostsRepository.getAllPriorities().then((res) => {
             setPriorities(res.data);
             setLoading(false);
@@ -21,7 +29,23 @@ export default function Priorities() {
                 setLoading(false);
                 setError("An error has occured!");
             })
-    }, []);
+    }
+
+    const deletePriority = (id) => {
+        DeleteRepository.deletePriority(id).then((res) => {
+            handleCloseDialog();
+            loadPriorities();
+        })
+    }
+
+    const handleOpenDialog = (id) => {
+        setDialogOpen(true);
+        setSelectedForDelete(id);
+    }
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    }
 
     return <>
 
@@ -47,6 +71,11 @@ export default function Priorities() {
                                                 <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Open</Button>
                                             </Link>
                                         </TableCell>
+                                        <TableCell>
+                                            <Button onClick={() => {
+                                                handleOpenDialog(item.id);
+                                            }} color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                         </TableBody>
@@ -64,5 +93,20 @@ export default function Priorities() {
             </Grid>
         </Container>
 
+        <Dialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+        >
+            <DialogTitle>
+                Confirmation
+            </DialogTitle>
+            <DialogContent>
+                Are you sure you want to delete this ticket type?
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => { deletePriority(selectedForDelete) }}>Yes</Button>
+                <Button onClick={handleCloseDialog}>No</Button>
+            </DialogActions>
+        </Dialog>
     </>
 }

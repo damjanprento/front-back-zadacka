@@ -3,9 +3,10 @@ import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBo
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
 import { DeleteRepository } from "../repo/DeleteRepository";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 export default function TicketTypes() {
+    let { id } = useParams();
     const [ticketTypes, setTicketTypes] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();

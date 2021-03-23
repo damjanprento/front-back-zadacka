@@ -2,13 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { PostsRepository } from "../repo/PostRepository";
-import { Button, Container, Grid } from "@material-ui/core";
+import { Button, Container, Grid, makeStyles, Paper, TextField } from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: "30%"
+    },
+    item: {
+        padding: theme.spacing(2),
+        width: "100%",
+    },
+    desc: {
+        height: "30px",
+        textAlign: "center",
+        color: theme.palette.text.primary,
+        backgroundColor: "lightblue"
+    }
+}));
 
 export default function Priority() {
     let { id } = useParams();
-    const [priorityData, setPriorityData] = useState();
+
+    const [priorityData, setPriorityData] = useState({
+        name: ''
+    });
+
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
+
 
     useEffect(() => {
 
@@ -29,16 +54,28 @@ export default function Priority() {
         <>
             {loading && "Loading..."}
             {error && "Error: " + error}
-            <Container>
-                <Grid container spacing={1}>
-                    <Grid item xs={12} md={12}>
-                        <h1>Priority ID: {id}</h1>
+
+
+            <div className={useStyles("").root}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} style={{ textAlign: "center" }}>
+                        <form >
+                            <Grid item xs={12} className={useStyles("").item}>
+                                <Paper className={useStyles("").desc}>Details for Priority with name: <b>{priorityData.name}</b></Paper>
+                            </Grid>
+                            <Grid item xs={12} className={useStyles("").item}>
+                                <TextField
+                                    fullWidth
+                                    disabled
+                                    variant="outlined"
+                                    label='Name'
+                                    type="text"
+                                    value={priorityData.name}
+                                />
+                            </Grid>
+                        </form>
                     </Grid>
-                    <Grid item xs={12} md={12}>
-                        <h2>Priority Name: {priorityData?.name}</h2>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <p>Priority created by: {priorityData?.createdBy}</p>
+                    <Grid item xs={12} md={12} style={{ textAlign: "center" }}>
                         <p>
                             <Link push="true" to="/priorities" style={{ textDecoration: "none" }}>
                                 <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Back</Button>
@@ -51,7 +88,7 @@ export default function Priority() {
                         </p>
                     </Grid>
                 </Grid>
-            </Container>
+            </div>
 
         </>
     );

@@ -1,7 +1,7 @@
 import { Button, Grid, Hidden, Paper, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useParams } from 'react-router';
+import { Redirect, useParams } from 'react-router';
 import { PostsRepository } from '../repo/PostRepository';
 import { EditInfoRepository } from '../repo/EditInfoRepository';
 
@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
 export default function EditPriority(props) {
     let { id } = useParams();
     const [formData, setFormData] = useState({
-        name: '',
-        createdBy: ''
+        name: ''
     });
     const [error, setError] = useState();
+    const [redirectTo, setRedirectTo] = useState();
 
     useEffect(() => {
         loadData();
@@ -57,6 +57,7 @@ export default function EditPriority(props) {
         EditInfoRepository.editPriorityInfo(formData)
             .then((res) => {
                 setFormData(res.data);
+                setRedirectTo("/priorities");
             })
             .catch((err) => {
                 console.log(err);
@@ -65,13 +66,15 @@ export default function EditPriority(props) {
     }
 
     return <>
-
+        {
+            redirectTo && <Redirect to={redirectTo} push={true} />
+        }
         <div className={useStyles("").root}>
             <Grid container spacing={3}>
                 <Grid item xs={12} style={{ textAlign: "center" }}>
                     <form >
                         <Grid item xs={12} className={useStyles("").item}>
-                            <Paper className={useStyles("").desc}>Edit Priority with ID: <b>{id}</b></Paper>
+                            <Paper className={useStyles("").desc}>Edit Priority with name: <b>{formData.name}</b></Paper>
                         </Grid>
                         <Grid item xs={12} className={useStyles("").item}>
                             <TextField
@@ -81,16 +84,6 @@ export default function EditPriority(props) {
                                 type="text"
                                 onChange={(e) => handleChangeFormData("name", e.target.value)}
                                 value={formData.name}
-                            />
-                        </Grid>
-                        <Grid item xs={12} className={useStyles("").item}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                label="Created By"
-                                type="text"
-                                onChange={(e) => handleChangeFormData("createdBy", e.target.value)}
-                                value={formData.createdBy}
                             />
                         </Grid>
 

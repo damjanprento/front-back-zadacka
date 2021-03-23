@@ -12,5 +12,11 @@ export const DeleteRepository = {
             method: "DELETE",
             url: `http://localhost:8888/tickets/${id}`
         })
+    },
+    deletePriority: function (id) {
+        return axios({
+            method: "DELETE",
+            url: `http://localhost:8888/priorities/${id}`
+        })
     }
 }

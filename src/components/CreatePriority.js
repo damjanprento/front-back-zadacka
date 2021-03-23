@@ -1,7 +1,7 @@
 import { Button, Grid, InputLabel, MenuItem, Paper, Select, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useParams } from 'react-router';
+import { Redirect, useParams } from 'react-router';
 import { PostsRepository } from '../repo/PostRepository';
 import { EditInfoRepository } from '../repo/EditInfoRepository';
 import { PostInfoRepository } from '../repo/PostInfoRepository';
@@ -32,6 +32,7 @@ export default function CreatePriority(props) {
     });
     const [error, setError] = useState();
     const [ticketTypes, setTicketTypes] = useState();
+    const [redirectTo, setRedirectTo] = useState();
 
     useEffect(() => {
         PostsRepository.getAllTicketTypes()
@@ -59,6 +60,7 @@ export default function CreatePriority(props) {
             .then((res) => {
                 console.log(res.data);
                 setFormData(res.data);
+                setRedirectTo("/priorities");
             })
             .catch((err) => {
                 console.log(err);
@@ -67,7 +69,9 @@ export default function CreatePriority(props) {
     }
 
     return <>
-
+        {
+            redirectTo && <Redirect to={redirectTo} push={true} />
+        }
         <div className={useStyles("").root}>
             <Grid container spacing={3}>
                 <Grid item xs={12} style={{ textAlign: "center" }}>
