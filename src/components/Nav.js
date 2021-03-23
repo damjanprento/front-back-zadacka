@@ -33,7 +33,7 @@ export default function Nav() {
             <Container>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6}>
-                        <span style={{ lineHeight: '2.3' }}>HELLO THERE</span>
+                        <span style={{ lineHeight: '2.3' }}>TICKETING SYSTEM</span>
                     </Grid>
                     <Grid item xs={12} sm={6} style={{ textAlign: 'center' }}>
                         <Link to='/' style={{ textDecoration: 'none' }}>
