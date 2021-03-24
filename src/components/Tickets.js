@@ -1,41 +1,39 @@
 import React from 'react';
-import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogActions, TableContainer, Paper, makeStyles } from '@material-ui/core';
+import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogActions, TableContainer, Paper, makeStyles, IconButton, useTheme, TableFooter, TablePagination } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
 import { DeleteRepository } from "../repo/DeleteRepository";
 import { Link } from 'react-router-dom';
 import { useStyles } from './styles/TableStyles';
+import { TableRepository } from "../repo/TableRepository";
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 
 
 export default function Tickets() {
-    const [tickets, setTickets] = useState();
     const [loading, setLoading] = useState();
-    const [error, setError] = useState();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedForDelete, setSelectedForDelete] = useState();
+    const [pageableTickets, setPageableTickets] = useState();
     const classes = useStyles();
 
     useEffect(() => {
         setLoading(true);
-        loadTickets();
+        loadPageableTickets(0, 5);
+
     }, []);
 
-    const loadTickets = () => {
-        PostsRepository.getAllTickets().then((res) => {
-            setTickets(res.data);
-            setLoading(false);
-        })
-            .catch((err) => {
-                console.log(err);
-                setLoading(false);
-                setError("An error has occured!");
+    const loadPageableTickets = (page, size) => {
+        TableRepository.getPageableTickets(page, size)
+            .then((res) => {
+                console.log(res.data.content);
+                setPageableTickets(res.data);
             })
     }
 
     const deleteTicket = (id) => {
         DeleteRepository.deleteTicket(id).then((res) => {
             handleCloseDialog();
-            loadTickets();
+            loadPageableTickets(0, 5);
         })
     }
 
@@ -46,6 +44,16 @@ export default function Tickets() {
 
     const handleCloseDialog = () => {
         setDialogOpen(false);
+    }
+
+
+    const handleChangePage = (event, newPage) => {
+        loadPageableTickets(newPage, pageableTickets.size);
+    }
+
+    const handleChangeRowsPerPage = (event) => {
+        console.log(parseInt(event.target.value))
+        loadPageableTickets(0, parseInt(event.target.value));
     }
 
     return <>
@@ -67,11 +75,10 @@ export default function Tickets() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {tickets &&
-                                    tickets.length > 0 &&
-                                    tickets.map((item, key) => (
-                                        <TableRow className={classes.tblBody} key={item.id}>
-                                            <TableCell>{key + 1}.</TableCell>
+                                {pageableTickets && pageableTickets.content && pageableTickets.content.length > 0 &&
+                                    pageableTickets.content.map((item, key) => (
+                                        <TableRow className={classes.tblBody} key={key}>
+                                            <TableCell>{(pageableTickets.number * pageableTickets.size) + (key + 1)}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.ticketType.name}</TableCell>
                                             <TableCell>{item.status}</TableCell>
@@ -89,6 +96,19 @@ export default function Tickets() {
                                         </TableRow>
                                     ))}
                             </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 15]}
+                                        count={pageableTickets?.totalElements}
+                                        rowsPerPage={pageableTickets?.size}
+                                        page={pageableTickets?.number}
+                                        onChangePage={handleChangePage}
+                                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                                    />
+                                </TableRow>
+
+                            </TableFooter>
                         </Table>
                     </TableContainer>
                 </Grid>

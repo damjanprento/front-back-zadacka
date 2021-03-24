@@ -1,27 +1,35 @@
 import React from 'react';
-import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, DialogTitle, DialogContent, DialogActions, Dialog, Paper, TableContainer, makeStyles } from '@material-ui/core';
+import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, DialogTitle, DialogContent, DialogActions, Dialog, Paper, TableContainer, makeStyles, TableFooter, TablePagination } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
 import { DeleteRepository } from "../repo/DeleteRepository";
 import { Link, useParams } from 'react-router-dom';
 import { useStyles } from './styles/TableStyles';
+import { TableRepository } from "../repo/TableRepository";
 
 export default function TicketTypes() {
     let { id } = useParams();
-    const [ticketTypes, setTicketTypes] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
     const [priorities, setPriorities] = useState();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedForDelete, setSelectedForDelete] = useState();
+    const [pageableTicketTypes, setPageableTicketTypes] = useState();
     const classes = useStyles();
 
     useEffect(() => {
-
         setLoading(true);
         loadPriorities();
-        loadTicketTypes();
+        loadPageableTicketTypes(0, 5);
     }, []);
+
+
+    const loadPageableTicketTypes = (page, size) => {
+        TableRepository.getPageableTicketTypes(page, size)
+            .then((res) => {
+                setPageableTicketTypes(res.data);
+            })
+    }
 
     const loadPriorities = () => {
         PostsRepository.getAllPriorities().then((res) => {
@@ -29,22 +37,10 @@ export default function TicketTypes() {
         })
     }
 
-    const loadTicketTypes = () => {
-        PostsRepository.getAllTicketTypes().then((res) => {
-            setTicketTypes(res.data);
-            setLoading(false);
-        })
-            .catch((err) => {
-                console.log(err);
-                setLoading(false);
-                setError("An error has occured!");
-            })
-    }
-
     const deleteTicketType = (id) => {
         DeleteRepository.deleteTicketType(id).then((res) => {
             handleCloseDialog();
-            loadTicketTypes();
+            loadPageableTicketTypes(0, 5);
         })
     }
 
@@ -55,6 +51,15 @@ export default function TicketTypes() {
 
     const handleCloseDialog = () => {
         setDialogOpen(false);
+    }
+
+    const handleChangePage = (event, newPage) => {
+        loadPageableTicketTypes(newPage, pageableTicketTypes.size);
+    }
+
+    const handleChangeRowsPerPage = (event) => {
+        console.log(parseInt(event.target.value))
+        loadPageableTicketTypes(0, parseInt(event.target.value));
     }
 
     return <>
@@ -75,11 +80,10 @@ export default function TicketTypes() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ticketTypes &&
-                                    ticketTypes.length > 0 &&
-                                    ticketTypes.map((item, key) => (
-                                        <TableRow className={classes.tblBody} key={item.id}>
-                                            <TableCell>{key + 1}.</TableCell>
+                                {pageableTicketTypes && pageableTicketTypes.content && pageableTicketTypes.content.length > 0 &&
+                                    pageableTicketTypes.content.map((item, key) => (
+                                        <TableRow className={classes.tblBody} key={key}>
+                                            <TableCell>{(pageableTicketTypes.number * pageableTicketTypes.size) + (key + 1)}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>
@@ -87,8 +91,7 @@ export default function TicketTypes() {
                                                     <ul>
                                                         <li>{priority.name}</li>
                                                     </ul>
-                                                ))
-                                                }
+                                                ))}
                                             </TableCell>
                                             <TableCell>
                                                 <Link to={`/ticket_types/details/${item.id}`} style={{ textDecoration: "none" }}>
@@ -103,6 +106,19 @@ export default function TicketTypes() {
                                         </TableRow>
                                     ))}
                             </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 15]}
+                                        count={pageableTicketTypes?.totalElements}
+                                        rowsPerPage={pageableTicketTypes?.size}
+                                        page={pageableTicketTypes?.number}
+                                        onChangePage={handleChangePage}
+                                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                                    />
+                                </TableRow>
+
+                            </TableFooter>
                         </Table>
                     </TableContainer>
                 </Grid>

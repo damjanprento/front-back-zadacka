@@ -1,42 +1,37 @@
 import React from 'react';
-import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogActions, TableContainer, Paper, makeStyles } from '@material-ui/core';
+import { Grid, Table, TableCell, TableRow, Container, Button, TableHead, TableBody, Dialog, DialogTitle, DialogContent, DialogActions, TableContainer, Paper, makeStyles, TableFooter, TablePagination } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { PostsRepository } from "../repo/PostRepository";
 import { DeleteRepository } from "../repo/DeleteRepository";
 import { Link, Redirect } from 'react-router-dom';
 import { useStyles } from './styles/TableStyles';
+import { TableRepository } from "../repo/TableRepository";
 
 export default function Priorities() {
-    const [priorities, setPriorities] = useState();
     const [loading, setLoading] = useState();
     const [error, setError] = useState();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedForDelete, setSelectedForDelete] = useState();
+    const [pageablePriorities, setPageablePriorities] = useState();
     const classes = useStyles();
 
 
     useEffect(() => {
-
         setLoading(true);
-        loadPriorities();
+        loadPageablePriorities(0, 5);
     }, []);
 
-    const loadPriorities = () => {
-        PostsRepository.getAllPriorities().then((res) => {
-            setPriorities(res.data);
-            setLoading(false);
-        })
-            .catch((err) => {
-                console.log(err);
-                setLoading(false);
-                setError("An error has occured!");
+    const loadPageablePriorities = (page, size) => {
+        TableRepository.getPageablePriorities(page, size)
+            .then((res) => {
+                setPageablePriorities(res.data);
             })
     }
 
     const deletePriority = (id) => {
         DeleteRepository.deletePriority(id).then((res) => {
             handleCloseDialog();
-            loadPriorities();
+            loadPageablePriorities(0, 5);
         })
     }
 
@@ -47,6 +42,15 @@ export default function Priorities() {
 
     const handleCloseDialog = () => {
         setDialogOpen(false);
+    }
+
+    const handleChangePage = (event, newPage) => {
+        loadPageablePriorities(newPage, pageablePriorities.size);
+    }
+
+    const handleChangeRowsPerPage = (event) => {
+        console.log(parseInt(event.target.value))
+        loadPageablePriorities(0, parseInt(event.target.value));
     }
 
     return <>
@@ -66,11 +70,10 @@ export default function Priorities() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {priorities &&
-                                    priorities.length > 0 &&
-                                    priorities.map((item, key) => (
-                                        <TableRow className={classes.tblBody} key={item.id}>
-                                            <TableCell>{key + 1}.</TableCell>
+                                {pageablePriorities && pageablePriorities.content && pageablePriorities.content.length > 0 &&
+                                    pageablePriorities.content.map((item, key) => (
+                                        <TableRow className={classes.tblBody} key={key}>
+                                            <TableCell>{(pageablePriorities.number * pageablePriorities.size) + (key + 1)}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>
@@ -86,6 +89,19 @@ export default function Priorities() {
                                         </TableRow>
                                     ))}
                             </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 15]}
+                                        count={pageablePriorities?.totalElements}
+                                        rowsPerPage={pageablePriorities?.size}
+                                        page={pageablePriorities?.number}
+                                        onChangePage={handleChangePage}
+                                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                                    />
+                                </TableRow>
+
+                            </TableFooter>
                         </Table>
                     </TableContainer>
                 </Grid>
