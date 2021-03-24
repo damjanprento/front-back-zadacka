@@ -66,6 +66,7 @@ export default function TicketTypes() {
                         <Table>
                             <TableHead>
                                 <TableRow className={classes.tblHead}>
+                                    <TableCell></TableCell>
                                     <TableCell><h2>Ticket-Type ID</h2></TableCell>
                                     <TableCell><h2>Ticket-Type Name</h2></TableCell>
                                     <TableCell><h2>Ticket-Type Priorities</h2></TableCell>
@@ -76,8 +77,9 @@ export default function TicketTypes() {
                             <TableBody>
                                 {ticketTypes &&
                                     ticketTypes.length > 0 &&
-                                    ticketTypes.map((item) => (
-                                        <TableRow key={item.id}>
+                                    ticketTypes.map((item, key) => (
+                                        <TableRow className={classes.tblBody} key={item.id}>
+                                            <TableCell>{key}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>

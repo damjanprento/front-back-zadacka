@@ -58,6 +58,7 @@ export default function Priorities() {
                         <Table>
                             <TableHead>
                                 <TableRow className={classes.tblHead}>
+                                    <TableCell></TableCell>
                                     <TableCell><h2>Priority ID</h2></TableCell>
                                     <TableCell><h2>Priority Name</h2></TableCell>
                                     <TableCell><h2>Details</h2></TableCell>
@@ -67,8 +68,9 @@ export default function Priorities() {
                             <TableBody>
                                 {priorities &&
                                     priorities.length > 0 &&
-                                    priorities.map((item) => (
-                                        <TableRow key={item.id}>
+                                    priorities.map((item, key) => (
+                                        <TableRow className={classes.tblBody} key={item.id}>
+                                            <TableCell>{key}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>

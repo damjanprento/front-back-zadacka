@@ -16,7 +16,6 @@ export default function Tickets() {
     const classes = useStyles();
 
     useEffect(() => {
-
         setLoading(true);
         loadTickets();
     }, []);
@@ -24,6 +23,7 @@ export default function Tickets() {
     const loadTickets = () => {
         PostsRepository.getAllTickets().then((res) => {
             setTickets(res.data);
+            console.log(res.data);
             setLoading(false);
         })
             .catch((err) => {
@@ -58,6 +58,7 @@ export default function Tickets() {
                         <Table>
                             <TableHead>
                                 <TableRow className={classes.tblHead}>
+                                    <TableCell></TableCell>
                                     <TableCell><h2>Ticket ID</h2></TableCell>
                                     <TableCell><h2>Ticket-Type Name</h2></TableCell>
                                     <TableCell><h2>Ticket Status</h2></TableCell>
@@ -69,8 +70,9 @@ export default function Tickets() {
                             <TableBody>
                                 {tickets &&
                                     tickets.length > 0 &&
-                                    tickets.map((item) => (
-                                        <TableRow key={item.id}>
+                                    tickets.map((item, key) => (
+                                        <TableRow className={classes.tblBody} key={item.id}>
+                                            <TableCell>{key}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.ticketType.name}</TableCell>
                                             <TableCell>{item.status}</TableCell>

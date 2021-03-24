@@ -1,9 +1,7 @@
-import { Button, Container, Grid, InputLabel, MenuItem, Paper, Select, TextField } from '@material-ui/core';
+import { Button, Container, Grid, Paper, TextField } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Redirect, useParams } from 'react-router';
+import { Redirect } from 'react-router';
 import { PostsRepository } from '../repo/PostRepository';
-import { EditInfoRepository } from '../repo/EditInfoRepository';
 import { PostInfoRepository } from '../repo/PostInfoRepository';
 import { useStyles } from "./styles/EditFormStyles";
 
