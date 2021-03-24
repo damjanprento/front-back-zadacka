@@ -23,7 +23,6 @@ export default function Tickets() {
     const loadTickets = () => {
         PostsRepository.getAllTickets().then((res) => {
             setTickets(res.data);
-            console.log(res.data);
             setLoading(false);
         })
             .catch((err) => {
@@ -72,7 +71,7 @@ export default function Tickets() {
                                     tickets.length > 0 &&
                                     tickets.map((item, key) => (
                                         <TableRow className={classes.tblBody} key={item.id}>
-                                            <TableCell>{key}.</TableCell>
+                                            <TableCell>{key + 1}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.ticketType.name}</TableCell>
                                             <TableCell>{item.status}</TableCell>

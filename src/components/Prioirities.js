@@ -70,7 +70,7 @@ export default function Priorities() {
                                     priorities.length > 0 &&
                                     priorities.map((item, key) => (
                                         <TableRow className={classes.tblBody} key={item.id}>
-                                            <TableCell>{key}.</TableCell>
+                                            <TableCell>{key + 1}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>

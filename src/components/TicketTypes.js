@@ -79,7 +79,7 @@ export default function TicketTypes() {
                                     ticketTypes.length > 0 &&
                                     ticketTypes.map((item, key) => (
                                         <TableRow className={classes.tblBody} key={item.id}>
-                                            <TableCell>{key}.</TableCell>
+                                            <TableCell>{key + 1}.</TableCell>
                                             <TableCell>{item.id}</TableCell>
                                             <TableCell>{item.name}</TableCell>
                                             <TableCell>
