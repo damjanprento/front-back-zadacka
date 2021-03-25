@@ -15,12 +15,14 @@ import EditPriority from './components/EditPriority';
 import CreateTicket from './components/CreateTicket';
 import CreateTicketType from './components/CreateTicketType';
 import CreatePriority from './components/CreatePriority';
+import Login from './components/Login';
 
 
 function App() {
   return (
     <div className="main">
       <Route path="/" exact component={Home} />
+      <Route path="/login" exact component={Login}></Route>
       <Route path="/tickets" exact component={Tickets} />
       <Route path="/ticket_types" exact component={TicketTypes} />
       <Route path="/priorities" exact component={Priorities} />
