@@ -1,10 +1,11 @@
 import axios from 'axios';
+import { AuthService } from './AuthService';
 
 export const PostInfoRepository = {
     createTicket: function (data) {
         return axios({
             method: "POST",
-            url: "http://localhost:8888/tickets",
+            url: `http://localhost:8888/tickets?access_token=${AuthService.getAccessToken()}`,
             data: data
         });
     },

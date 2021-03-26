@@ -1,6 +1,7 @@
 import { Button, Container, Grid, LinearProgress, TextField } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { AuthService } from '../repo/AuthService';
 
@@ -76,7 +77,15 @@ export default function Login() {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Button fullWidth color="primary" disabled={loading} variant="outlined" onClick={() => { handleLogin() }}>Login</Button>
+                            <Button fullWidth color="primary" disabled={loading} variant="contained" onClick={() => { handleLogin() }}>Login</Button>
+                        </Grid>
+                        <Grid item xs={12} style={{ textAlign: 'center' }}>
+                            <h3 style={{ margin: '0px' }}>Or, if you don't have an account:</h3>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Link to='/register' push="true" style={{ textDecoration: 'none' }}>
+                                <Button fullWidth color="primary" disabled={loading} variant="contained">Register here</Button>
+                            </Link>
                         </Grid>
                     </Grid>
                 </Grid>

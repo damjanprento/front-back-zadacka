@@ -1,22 +1,24 @@
 import axios from "axios";
+import { AuthService } from "./AuthService";
+
 
 export const PostsRepository = {
     getAllTickets: function () {
         return axios({
             method: "GET",
-            url: `http://localhost:8888/tickets`,
+            url: `http://localhost:8888/tickets?access_token=${AuthService.getAccessToken()}`,
         });
     },
     getTicketById: function (id) {
         return axios({
             method: "GET",
-            url: `http://localhost:8888/tickets/${id}`,
+            url: `http://localhost:8888/tickets/${id}?access_token=${AuthService.getAccessToken()}`,
         });
     },
     getAllTicketTypes: function () {
         return axios({
             method: "GET",
-            url: `http://localhost:8888/ticket_types`,
+            url: `http://localhost:8888/ticket_types?access_token=${AuthService.getAccessToken()}`,
         });
     },
     getTicketTypeById: function (id) {

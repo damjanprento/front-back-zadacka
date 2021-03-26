@@ -19,6 +19,10 @@ const useStyles = makeStyles((theme) => ({
     btncolor: {
         backgroundColor: "none",
         color: "white",
+        lineHeight: '1.9',
+        '&:hover': {
+            backgroundColor: "dimgray"
+        }
     },
     btnLogout: {
         backgroundColor: "dimgray",
@@ -40,11 +44,12 @@ export default function Nav() {
 
     return <>
         {
-            location.pathname !== '/login' && !AuthService.isAuthenticated() &&
+            !['/login', '/register'].includes(location.pathname) && !AuthService.isAuthenticated() &&
             <Redirect to="/login" />
         }
+
         {
-            location.pathname !== '/login' &&
+            !['/login', '/register'].includes(location.pathname) &&
             <div className={classes.nav}>
                 <Container>
                     <Grid container spacing={3}>
@@ -52,7 +57,7 @@ export default function Nav() {
                         <Grid item xs={12} sm={8} md={8}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} sm={6}>
-                                    <span style={{ lineHeight: '2.3' }}>TICKETING SYSTEM</span>
+                                    <span style={{ lineHeight: '2.4' }}>TICKETING SYSTEM</span>
                                 </Grid>
                                 <Grid item xs={12} sm={6} style={{ textAlign: 'center' }}>
                                     <Link to='/' style={{ textDecoration: 'none' }}>
@@ -72,7 +77,6 @@ export default function Nav() {
                             </Grid>
                         </Grid>
                         <Grid item sm={2} md={2}>
-
                             {
                                 AuthService.isAuthenticated() &&
                                 (

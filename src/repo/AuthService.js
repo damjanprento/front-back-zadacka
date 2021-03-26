@@ -8,7 +8,13 @@ export const AuthService = {
     },
 
     getAccessToken: () => {
-        if (this.isAuthenticated()) {
+        let isAuthenticated = false;
+        if (window.localStorage.getItem('auth')) {
+            isAuthenticated = true;
+        } else {
+            isAuthenticated = false;
+        }
+        if (isAuthenticated) {
             return JSON.parse(window.localStorage.getItem('auth')).access_token
         }
         return null;

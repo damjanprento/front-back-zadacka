@@ -13,5 +13,19 @@ export const useStyles = makeStyles((theme) => ({
         '&:nth-child(odd)': {
             backgroundColor: "#eee"
         },
+    },
+    deleteBtn: {
+        color: "white",
+        backgroundColor: "black",
+        '&:hover': {
+            backgroundColor: "red"
+        }
+    },
+    detailsBtn: {
+        color: "white",
+        backgroundColor: "black",
+        '&:hover': {
+            backgroundColor: "dimgray"
+        }
     }
 }));

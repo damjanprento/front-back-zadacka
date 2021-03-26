@@ -95,13 +95,13 @@ export default function TicketTypes() {
                                             </TableCell>
                                             <TableCell>
                                                 <Link to={`/ticket_types/details/${item.id}`} style={{ textDecoration: "none" }}>
-                                                    <Button color="primary" style={{ color: "white", backgroundColor: "black" }}>Open</Button>
+                                                    <Button color="primary" className={classes.detailsBtn}>Open</Button>
                                                 </Link>
                                             </TableCell>
                                             <TableCell>
                                                 <Button onClick={() => {
                                                     handleOpenDialog(item.id);
-                                                }} color="primary" style={{ color: "white", backgroundColor: "black" }}>Delete</Button>
+                                                }} color="primary" className={classes.deleteBtn}>Delete</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
